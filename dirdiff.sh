@@ -10,6 +10,7 @@ test $# -eq 2 || {
 DIRA=$1
 DIRB=$2
 EOFMARK=EOOOFDIRDIFF
+TMP=/tmp/dirdiff.$$
 
 mydon() {
   dp=${1#$3/}
@@ -24,11 +25,11 @@ mydel() {
 }
 
 mydiff() {
-  diff $1 $2 >/dev/null 2>&1
+  diff -u $1 $2 >$TMP
   case $? in
     1)
       echo "patch -Np1 <<$EOFMARK"
-      ! diff -u $1 $2
+      cat $TMP
       echo "$EOFMARK"
       ;;
     2) myblob ${2#*/};;
