@@ -24,7 +24,7 @@ mydel() {
 }
 
 mydiff() {
-  diff -q $1 $2 >/dev/null 2>&1
+  diff $1 $2 >/dev/null 2>&1
   case $? in
     1)
       echo "patch -Np1 <<$EOFMARK"
