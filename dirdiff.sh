@@ -13,6 +13,9 @@ EOFMARK=EOOOFDIRDIFF
 TMP=/tmp/dirdiff.$$
 trap "rm $TMP" EXIT
 
+DIRA=${DIRA%/}
+DIRB=${DIRB%/}
+
 mydon() {
   dp=${1#$3/}
   dp=${dp#$3}
@@ -33,7 +36,7 @@ mydiff() {
       cat $TMP
       echo "$EOFMARK"
       ;;
-    2) myblob ${2#*/};;
+    2) myblob ${2#$DIRB/};;
   esac
 }
 
