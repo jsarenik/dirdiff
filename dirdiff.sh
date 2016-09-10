@@ -27,9 +27,9 @@ mydiff() {
   diff -q $1 $2 >/dev/null 2>&1
   case $? in
     1)
-      echo 'patch -Np1 <<EOOOFDIRDIFF'
+      echo "patch -Np1 <<$EOFMARK"
       ! diff -u $1 $2
-      echo EOOOFDIRDIFF
+      echo "$EOFMARK"
       ;;
     2) myblob ${2#*/};;
   esac
