@@ -11,7 +11,7 @@ DIRA=$1
 DIRB=$2
 EOFMARK=EOOOFDIRDIFF
 TMP=/tmp/dirdiff.$$
-trap "rm $TMP" EXIT
+trap "rm -f $TMP" EXIT
 
 DIRA=${DIRA%/}
 DIRB=${DIRB%/}
