@@ -13,6 +13,9 @@ EOFMARK=EOOOFDIRDIFF
 TMP=/tmp/dirdiff.$$
 trap "rm -f $TMP" EXIT
 
+BOPT=-D
+grep -q Linux /proc/version 2>/dev/null && BOPT=-d
+
 DIRA=${DIRA%/}
 DIRB=${DIRB%/}
 
@@ -41,10 +44,17 @@ mydiff() {
 }
 
 myblob() {
-  echo "base64 -D <<$EOFMARK | tar xv"
+  echo "base64 \$BOPT <<$EOFMARK | tar xv"
   tar c -C $DIRB $1 | base64
   echo "$EOFMARK"
 }
+
+# Header
+#  - use base64 -d on Linux
+cat <<EOF
+BOPT=-D
+grep -q Linux /proc/version && BOPT=-d
+EOF
 
 diff -qr $DIRA $DIRB | while read a b c d e
 do
