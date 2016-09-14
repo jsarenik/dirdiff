@@ -38,16 +38,16 @@ istext() {
 mydiff() {
   test -n "$DD_NAMES" && echo "# mydiff $*"
   islink $2 ${2#$DIRB/} && return 0
-  if
-    istext $1 $2
-  then
-    echo "base64 \$BOPT <<$EOFMARK | patch -Np1"
-    diff --no-dereference -u $1 $2 >$TMP
-    cat $TMP | base64
-    echo "$EOFMARK"
-  else
-    myblob ${2#$DIRB/}
-  fi
+  diff --no-dereference -u $1 $2 >$TMP
+  grep -q ^Binary $TMP
+  case $? in
+    1)
+      echo "base64 \$BOPT <<$EOFMARK | patch -Np$PLEV"
+      cat $TMP | base64
+      echo "$EOFMARK"
+      ;;
+    0) myblob ${2#$DIRB/};;
+  esac
 }
 
 myblob() {

@@ -31,6 +31,9 @@ grep -q Linux /proc/version 2>/dev/null && BOPT=-d
 
 DIRA=${DIRA%/}
 DIRB=${DIRB%/}
+#PLEV=$(echo "/$DIRB" | grep -o '/' | wc -c | tr -d ' ')
+#PLEV=$[$PLEV-2]
+PLEV=2
 
 # Header
 #  - use base64 -d on Linux
