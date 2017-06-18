@@ -86,7 +86,7 @@ myblob() {
   test -n "$DD_NAMES" && echo "# myblob $*"
   islink $DIRB/$1 $1 && return 0
   echo "base64 \$BOPT <<$EOFMARK | tar xv"
-  tar c -C $DIRB $1 | base64
+  tar c --numeric-owner -C $DIRB $1 | base64
   echo "$EOFMARK"
 }
 
