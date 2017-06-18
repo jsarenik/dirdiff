@@ -35,6 +35,7 @@ mydiff() {
   diff -u $1 $2 >$TMP
   case $? in
     1)
+      test -n "$DD_NAMES" && echo "# File $1 $2"
       echo "base64 \$BOPT <<$EOFMARK | patch -Np1"
       cat $TMP | base64
       echo "$EOFMARK"
@@ -44,6 +45,7 @@ mydiff() {
 }
 
 myblob() {
+  test -n "$DD_NAMES" && echo "# File $1"
   echo "base64 \$BOPT <<$EOFMARK | tar xv"
   tar c -C $DIRB $1 | base64
   echo "$EOFMARK"
