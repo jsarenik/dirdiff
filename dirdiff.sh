@@ -19,8 +19,23 @@ grep -q Linux /proc/version 2>/dev/null && BOPT=-d
 DIRA=${DIRA%/}
 DIRB=${DIRB%/}
 
+# mydon loop/bin: dbclient loop
+# bin:
+# bin:
+# bin
+# bin/
+# bin/dbclient
+
+# mydon loop: version loop
+# loop:
+# :
+# 
+# 
+# version
+
 mydon() {
-  dp=${1#$3/}
+  A=$3/
+  dp=${1#$A}
   dp=${dp#$3}
   dp=${dp%:}
   dp=${dp:+"$dp/"}
