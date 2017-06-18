@@ -19,8 +19,23 @@ grep -q Linux /proc/version 2>/dev/null && BOPT=-d
 DIRA=${DIRA%/}
 DIRB=${DIRB%/}
 
+# mydon loop/bin: dbclient loop
+# bin:
+# bin:
+# bin
+# bin/
+# bin/dbclient
+
+# mydon loop: version loop
+# loop:
+# :
+# 
+# 
+# version
+
 mydon() {
-  dp=${1#$3/}
+  A=$3/
+  dp=${1#$A}
   dp=${dp#$3}
   dp=${dp%:}
   dp=${dp:+"$dp/"}
@@ -28,14 +43,27 @@ mydon() {
 }
 
 mydel() {
+  test -n "$DD_NAMES" && echo "# mydel $*"
   echo "rm -rfv $1"
 }
 
+islink() {
+  if
+    test -L $1
+  then
+    TARGET=$(readlink $1)
+    echo "ln -nsf $TARGET $2"
+  else
+    return 1
+  fi
+}
+
 mydiff() {
+  test -n "$DD_NAMES" && echo "# mydiff $*"
+  islink $2 ${2#$DIRB/} && return 0
   diff -u $1 $2 >$TMP
   case $? in
     1)
-      test -n "$DD_NAMES" && echo "# File $1 $2"
       echo "base64 \$BOPT <<$EOFMARK | patch -Np1"
       cat $TMP | base64
       echo "$EOFMARK"
@@ -45,7 +73,8 @@ mydiff() {
 }
 
 myblob() {
-  test -n "$DD_NAMES" && echo "# File $1"
+  test -n "$DD_NAMES" && echo "# myblob $*"
+  islink $DIRB/$1 $1 && return 0
   echo "base64 \$BOPT <<$EOFMARK | tar xv"
   tar c -C $DIRB $1 | base64
   echo "$EOFMARK"
