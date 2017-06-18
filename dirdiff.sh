@@ -35,8 +35,8 @@ mydiff() {
   diff -u $1 $2 >$TMP
   case $? in
     1)
-      echo "patch -Np1 <<$EOFMARK"
-      cat $TMP
+      echo "base64 \$BOPT <<$EOFMARK | patch -Np1"
+      cat $TMP | base64
       echo "$EOFMARK"
       ;;
     2) myblob ${2#$DIRB/};;
