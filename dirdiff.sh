@@ -99,6 +99,7 @@ EOF
 
 diff --no-dereference -qr $DIRA $DIRB | while read a b c d e
 do
+  echo "# $a $b $c $d $e"
   case "$a $b $c" in
     Only\ in\ $DIRA*) mydel $(mydon $c $d $DIRA);;
     Only\ in\ $DIRB*) myblob $(mydon $c $d $DIRB);;
