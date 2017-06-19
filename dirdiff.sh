@@ -58,25 +58,35 @@ islink() {
   fi
 }
 
+istext() {
+  for f in $*
+  do
+    M1=$(strings $f | md5sum | cut -b-32)
+    M2=$(md5sum $f | cut -b-32)
+    test "$M1" = "$M2" || return 1
+  done
+}
+
 mydiff() {
   test -n "$DD_NAMES" && echo "# mydiff $*"
   islink $2 ${2#$DIRB/} && return 0
-  diff -u $1 $2 >$TMP
-  case $? in
-    1)
-      echo "base64 \$BOPT <<$EOFMARK | patch -Np1"
-      cat $TMP | base64
-      echo "$EOFMARK"
-      ;;
-    2) myblob ${2#$DIRB/};;
-  esac
+  if
+    istext $1 $2
+  then
+    echo "base64 \$BOPT <<$EOFMARK | patch -Np1"
+    diff --no-dereference -u $1 $2 >$TMP
+    cat $TMP | base64
+    echo "$EOFMARK"
+  else
+    myblob ${2#$DIRB/}
+  fi
 }
 
 myblob() {
   test -n "$DD_NAMES" && echo "# myblob $*"
   islink $DIRB/$1 $1 && return 0
   echo "base64 \$BOPT <<$EOFMARK | tar xv"
-  tar c -C $DIRB $1 | base64
+  tar c --numeric-owner -C $DIRB $1 | base64
   echo "$EOFMARK"
 }
 
@@ -87,12 +97,14 @@ BOPT=-D
 grep -q Linux /proc/version && BOPT=-d
 EOF
 
-diff -qr $DIRA $DIRB | while read a b c d e
+diff --no-dereference -qr $DIRA $DIRB | while read a b c d e
 do
+  echo "# $a $b $c $d $e"
   case "$a $b $c" in
     Only\ in\ $DIRA*) mydel $(mydon $c $d $DIRA);;
     Only\ in\ $DIRB*) myblob $(mydon $c $d $DIRB);;
     Files\ *) mydiff $b $d;;
+    Symbolic\ *) mydiff $c $e;;
     *) echo unknown line $a $b $c $d $e 1>&2; exit 1;;
   esac
 done
