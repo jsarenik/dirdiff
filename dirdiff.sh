@@ -7,6 +7,7 @@ test $# -eq 2 || {
   exit 1
 }
 
+# Export DIRDIFF_ALLBLOB=1 in order to get all blob no diff
 DIRA=$1
 DIRB=$2
 EOFMARK=EOOOFDIRDIFF
@@ -59,6 +60,7 @@ islink() {
 }
 
 istext() {
+  test -n "$DIRDIFF_ALLBLOB" && return 1
   for f in $*
   do
     M1=$(strings $f | md5sum | cut -b-32)
