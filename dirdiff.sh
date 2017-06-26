@@ -94,13 +94,16 @@ myblob() {
 
 # Header
 #  - use base64 -d on Linux
-cat <<EOF
-BOPT=-D
-grep -q Linux /proc/version && BOPT=-d
-EOF
+header() {
+  cat <<-EOF
+	BOPT=-D
+	grep -q Linux /proc/version && BOPT=-d
+	EOF
+}
 
 diff --no-dereference -qr $DIRA $DIRB | while read a b c d e
 do
+  test -z "$H" && { header; H=1; }
   echo "# $a $b $c $d $e"
   case "$a $b $c" in
     Only\ in\ $DIRA*) mydel $(mydon $c $d $DIRA);;
