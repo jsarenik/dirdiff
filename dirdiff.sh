@@ -112,4 +112,4 @@ do
     Symbolic\ *) mydiff $c $e;;
     *) echo unknown line $a $b $c $d $e 1>&2; exit 1;;
   esac
-done
+done | grep .
