@@ -8,6 +8,7 @@ test $# -eq 2 || {
 }
 
 # Export DD_ALLBLOB=1 in order to get all blob no diff
+# Export DD_NAMES=1 in order to print all file names
 DIRA=$1
 DIRB=$2
 EOFMARK=EOOOFDIRDIFF
