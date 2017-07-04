@@ -1,9 +1,16 @@
 #!/bin/sh
 
+VERSION=1.0-$(md5sum $0 | cut -b-7)
+
 a="/$0"; a=${a%/*}; a=${a:-.}; a=${a#/}/; BINDIR=$(cd $a; pwd)
 . $BINDIR/include/dirdiff.inc.sh
 
 test "$1" = "-t" && mytest
+test "$1" = "-V" && {
+  echo $VERSION
+  exit
+}
+
 test $# -eq 2 || {
   cat <<-EOF
 	Usage: $0 <directory_old> <directory_new>
