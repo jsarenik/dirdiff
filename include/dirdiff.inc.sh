@@ -59,6 +59,7 @@ myblob() {
     echo "base64 \$BOPT <<$EOFMARK | tar xv"
     tar c --numeric-owner -C $DIRB $1 | base64
   else
+    echo $1 | grep -q '/' && echo "mkdir -p ${1%/*}"
     echo "base64 \$BOPT <<$EOFMARK >$1"
     cat $DIRB/$1 | base64
   fi
