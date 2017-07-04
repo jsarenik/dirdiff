@@ -88,8 +88,15 @@ mydiff() {
 myblob() {
   test -n "$DD_NAMES" && echo "# myblob $*"
   islink $DIRB/$1 $1 && return 0
-  echo "base64 \$BOPT <<$EOFMARK >$1"
-  cat $DIRB/$1 | base64
+  if
+    test -d $DIRA/$1 -o -d $DIRB/$1
+  then
+    echo "base64 \$BOPT <<$EOFMARK | tar xv"
+    tar c --numeric-owner -C $DIRB $1 | base64
+  else
+    echo "base64 \$BOPT <<$EOFMARK >$1"
+    cat $DIRB/$1 | base64
+  fi
   echo "$EOFMARK"
 }
 
