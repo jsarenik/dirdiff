@@ -64,6 +64,8 @@ myblob() {
     cat $DIRB/$1 | base64
   fi
   echo "$EOFMARK"
+  ACCESS=$(busybox stat -c "%a" $DIRB/$1)
+  echo "chmod $ACCESS $1"
 }
 
 prok() {
