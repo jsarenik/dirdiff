@@ -11,17 +11,30 @@ test "$1" = "-V" && {
   exit
 }
 
-test $# -eq 2 || {
+usage() {
   cat <<-EOF
-	Usage: $0 <directory_old> <directory_new>
+	Usage: $0 [-x PAT [-x ...]] <directory_old> <directory_new>
+	  where optional -x has the same meaning as for diff - see diff(1)
 	EOF
   exit 1
-}
+} 1>&2
+
+test $# -ge 2 || usage
+
+unset EXCLUDE
+while
+  test "$1" = "-x"
+do
+  test -n "$EXCLUDE" && EXCLUDE="$EXCLUDE -x $2" || EXCLUDE="-x $2"
+  shift 2
+done
 
 # Export DD_ALLBLOB=1 in order to get all blob no diff
 # Export DD_NAMES=1 in order to print all file names
 DIRA=$1
 DIRB=$2
+test -d $DIRA || usage
+test -d $DIRB || usage
 EOFMARK=EOOOFDIRDIFF
 TMP=/tmp/dirdiff.$$
 trap "rm -f $TMP" EXIT
@@ -41,7 +54,7 @@ header() {
 	EOF
 }
 
-diff --no-dereference -qr $DIRA $DIRB | while read a b c d e
+diff $EXCLUDE --no-dereference -qr $DIRA $DIRB | while read a b c d e
 do
   test -z "$H" && { header; H=1; }
   echo "# $a $b $c $d $e"
