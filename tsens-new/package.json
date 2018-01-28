@@ -1,0 +1,11 @@
+{
+    "name": "tsens",
+    "version": "0.0.1",
+    "main": "tsens.js",
+    "private": true,
+
+    "plugin": {
+        "consumes": ["archive", "upload", "setup", "network", "btscan", "wifiscan", "camera"],
+        "provides": ["tsens"]
+    }
+}
