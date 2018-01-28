@@ -77,26 +77,32 @@ prfa() {
 }
 
 expectit() {
-  func=$1
-  A=$($func $3)
+  func=$1; shift
+  EXPRET=$1; shift
+  EXPECT=$1; shift
+  PARAMS=$*
+  A=$($func $PARAMS)
   RET=$?
   if
-    test "$A" = "$4"
-    test $RET = $2
+    test "$A" = "$EXPECT"
+    test $RET -eq $EXPRET
   then
-    prok "$func $3" "$4"
+    prok "$func $PARAMS" "$EXPECT"
   else
-    prfa "$func $3" "$A"
+    prfa "$func $PARAMS" "$A"
   fi
 }
 
 mytest() {
-  expectit mydon 0 "loop/bin: dbclient loop" bin/dbclient
-  expectit mydon 0 "loop: version loop" "version"
+  expectit mydon 0 bin/dbclient "loop/bin: dbclient loop"
+  expectit mydon 0 version "loop: version loop"
+  expectit mydon 0 b "b: boot" "boot"
+  expectit mydon 0 "b/boot: jobs.js" "boot/jobs.js" "b"
+  expectit mydon 0 boot/jobs.js b/boot: jobs.js b
   expectit mydel 0 "ahoj" "rm -rfv ahoj"
-  expectit islink 0 "$BINDIR/tests/types/a/symlink my-link" "ln -nsf .. my-link"
-  expectit islink 1 "$BINDIR/tests/types/a/text my-link" ""
-  expectit istext 0 "$BINDIR/tests/types/a/text"
-  expectit istext 1 "$BINDIR/tests/types/a/random"
+  expectit islink 0 "ln -nsf .. my-link" $BINDIR/tests/types/a/symlink my-link 
+  expectit islink 1 "" $BINDIR/tests/types/a/text my-link
+  expectit istext 0 "" $BINDIR/tests/types/a/text
+  expectit istext 1 "" $BINDIR/tests/types/a/random
   exit
 }
